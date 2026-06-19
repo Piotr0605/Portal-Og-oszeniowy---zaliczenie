@@ -1,0 +1,33 @@
+@model Ogloszenie
+@{
+    ViewData["Title"] = Model.Tytul;
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Ogłoszenia</a></li>
+        <li class="breadcrumb-item active">Szczegóły</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <span class="badge bg-secondary mb-2">@PomocnikKategorii.WyswietlNazwe(Model.Kategoria)</span>
+        <h1 class="h2">@Model.Tytul</h1>
+        <p class="text-muted mb-3">Dodano: @Model.DataUtworzenia.ToString("dd.MM.yyyy HH:mm")</p>
+
+        <h5>Opis</h5>
+        <p class="lead">@Model.Opis</p>
+
+        <h5>Cena</h5>
+        <p class="fs-4 text-primary fw-bold mb-4">
+            @(Model.Cena == 0 ? "Do uzgodnienia" : Model.Cena.ToString("N2") + " zł")
+        </p>
+
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edytuj</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Usuń</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Powrót</a>
+        </div>
+    </div>
+</div>

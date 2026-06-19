@@ -1,0 +1,25 @@
+@model Ogloszenie
+@{
+    ViewData["Title"] = "Usuń ogłoszenie";
+}
+
+<h1 class="h2 text-danger mb-4">Usuń ogłoszenie</h1>
+
+<div class="alert alert-warning">
+    Czy na pewno chcesz usunąć to ogłoszenie? Tej operacji nie można cofnąć.
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5>@Model.Tytul</h5>
+        <p class="text-muted mb-1">@PomocnikKategorii.WyswietlNazwe(Model.Kategoria)</p>
+        <p>@Model.Opis</p>
+        <strong>@(Model.Cena == 0 ? "Do uzgodnienia" : Model.Cena.ToString("N2") + " zł")</strong>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Tak, usuń</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
+</form>

@@ -1,0 +1,102 @@
+@model IEnumerable<Ogloszenie>
+@{
+    ViewData["Title"] = "Lista ogłoszeń";
+    var wybranaKategoria = ViewBag.WybranaKategoria as Kategoria?;
+    var fraza = ViewBag.Fraza as string;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <h1 class="h2 mb-0">Ogłoszenia</h1>
+    <a asp-action="Create" class="btn btn-primary">Dodaj ogłoszenie</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label" for="fraza">Szukaj ogłoszeń</label>
+                <input type="search"
+                       id="fraza"
+                       name="fraza"
+                       class="form-control"
+                       value="@fraza"
+                       placeholder="np. laptop, mieszkanie centrum..." />
+                <div class="form-text">Wyszukiwanie w tytule i opisie, obsługa wielu słów.</div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="kategoria">Kategoria</label>
+                <select id="kategoria" name="kategoria" class="form-select">
+                    <option value="">Wszystkie kategorie</option>
+                    @foreach (Kategoria kategoria in Enum.GetValues(typeof(Kategoria)))
+                    {
+                        if (wybranaKategoria == kategoria)
+                        {
+                            <option value="@kategoria" selected>@PomocnikKategorii.WyswietlNazwe(kategoria)</option>
+                        }
+                        else
+                        {
+                            <option value="@kategoria">@PomocnikKategorii.WyswietlNazwe(kategoria)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">Szukaj</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Wyczyść</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(fraza))
+{
+    <p class="text-muted mb-3">
+        Wyniki dla: <strong>@fraza</strong> (@Model.Count() znalezionych)
+    </p>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        @if (!string.IsNullOrWhiteSpace(fraza))
+        {
+            <text>Nie znaleziono ogłoszeń pasujących do wyszukiwania.</text>
+        }
+        else
+        {
+            <text>Brak ogłoszeń do wyświetlenia.</text>
+        }
+        <a asp-action="Create">Dodaj ogłoszenie</a>.
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var ogloszenie in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <span class="badge bg-secondary align-self-start mb-2">
+                            @PomocnikKategorii.WyswietlNazwe(ogloszenie.Kategoria)
+                        </span>
+                        <h5 class="card-title">@ogloszenie.Tytul</h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            @(ogloszenie.Opis.Length > 120 ? ogloszenie.Opis[..120] + "..." : ogloszenie.Opis)
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <strong class="text-primary fs-5">
+                                @(ogloszenie.Cena == 0 ? "Do uzgodnienia" : ogloszenie.Cena.ToString("N2") + " zł")
+                            </strong>
+                            <small class="text-muted">@ogloszenie.DataUtworzenia.ToString("dd.MM.yyyy")</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a asp-action="Details" asp-route-id="@ogloszenie.Id" class="btn btn-sm btn-outline-primary">Szczegóły</a>
+                        <a asp-action="Edit" asp-route-id="@ogloszenie.Id" class="btn btn-sm btn-outline-secondary">Edytuj</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
